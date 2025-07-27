@@ -131,7 +131,7 @@ function App() {
         purpose,
         initiatorId: currentUser!.id,
         status: "pending",
-        requiredSignatures,
+        requiredSignatures: 3,
         selectedSigners,
       }),
     });

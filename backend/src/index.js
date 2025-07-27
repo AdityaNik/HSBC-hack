@@ -89,9 +89,10 @@ app.post('/createTransaction', async (req, res) => {
     ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    const secretToSplit = crypto.getRandomValues(32);
-    const shares = await split(secretToSplit, selectedSigners.length, requiredSignatures);
 
+    const secretToSplit = crypto.getRandomValues(new Uint8Array(32));
+    const secretUint8 = new Uint8Array(secretToSplit);
+    const shares = await split(secretUint8, selectedSigners.length, requiredSignatures);
 
     const newTransaction = new Transaction({
       amount,
@@ -104,6 +105,7 @@ app.post('/createTransaction', async (req, res) => {
       selected_signers: selectedSigners, // Store selected signers for tracking
     });
 
+    console.log(selectedSigners);
 
     for (let i = 0; i < selectedSigners.length; i++) {
       const signer = selectedSigners[i];
