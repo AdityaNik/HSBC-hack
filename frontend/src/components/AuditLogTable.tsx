@@ -1,5 +1,5 @@
-import React from 'react';
-import { AuditEntry, Transaction } from '../types';
+import { AuditEntry } from '../types';
+import { Transaction } from '../App';
 
 interface AuditLogTableProps {
   auditLog: AuditEntry[];
@@ -18,7 +18,7 @@ export default function AuditLogTable({
     const transaction = transactions.find(t => t.id === transactionId);
     if (!transaction) return 'Unknown';
     
-    const signedCount = transaction.signatures.filter(sig => sig.status === 'signed').length;
+    const signedCount = transaction.selectedSigners.length;
     if (signedCount >= transaction.requiredSignatures) {
       return 'Complete';
     }

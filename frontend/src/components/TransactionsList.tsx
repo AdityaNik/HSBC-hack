@@ -1,4 +1,5 @@
-import { Transaction, User } from '../types';
+import { Transaction } from "../App";
+import { User } from "../types";
 
 interface TransactionsListProps {
   transactions: Transaction[];
@@ -26,7 +27,7 @@ export default function TransactionsList({
   };
 
   const getSignatureStatus = (transaction: Transaction) => {
-    const signedCount = transaction.signatures.filter(sig => sig.status === 'signed').length;
+    const signedCount = transaction.selectedSigners.length;
     return `${signedCount}/${transaction.requiredSignatures}`;
   };
 
@@ -114,9 +115,6 @@ export default function TransactionsList({
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                           Awaiting Signatures ({getSignatureStatus(transaction)})
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {transaction.createdAt.toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button

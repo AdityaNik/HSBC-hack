@@ -1,59 +1,71 @@
-const SignerSchema = new mongoose.Schema({
-  signer_id: {
-    type: mongoose.Schema.Types.UUID,
-    default: () => crypto.randomUUID(),
-    unique: true,
-  },
-  name: {
+// db/db.js
+import mongoose from "mongoose";
+import crypto from "crypto";
+
+// User Schema
+const UserSchema = new mongoose.Schema({
+  username: {
     type: String,
-    maxlength: 100,
+    required: true,
   },
-  email: {
+  role: {
     type: String,
-    maxlength: 100,
+    enum: ["initiator", "signer"],
+    required: true,
   },
-  totp_secret: {
-    type: String,
-    maxlength: 32,
+  mfaSecret: {
+    base32: String,
+    otpauth_url: String,
   },
-  key_share_hash: {
-    type: String,
-    maxlength: 64,
-  },
-  status: {
-    type: String,
-    enum: ["active", "suspended"],
-    default: "active",
-  },
-  created_at: {
-    type: Date,
-    default: Date.now,
-  },
+  key_share_hash: String,
+}, {
+  timestamps: true
 });
 
+// Transaction Schema
 const TransactionSchema = new mongoose.Schema({
   tx_id: {
-    type: mongoose.Schema.Types.UUID,
+    type: String,
     default: () => crypto.randomUUID(),
     unique: true,
   },
   amount: {
-    type: mongoose.Schema.Types.Decimal128,
-  },
-  from_account: {
-    type: String,
-    maxlength: 50,
-  },
-  to_account: {
-    type: String,
-    maxlength: 50,
-  },
-  creator_id: {
-    type: mongoose.Schema.Types.UUID,
+    type: Number,
     required: true,
   },
-  nonce: {
+  beneficiary: {
+    type: String,
+    maxlength: 100,
+    required: true,
+  },
+  purpose: {
+    type: String,
+    maxlength: 500,
+  },
+  creator_id: {
+    type: String, // UUID as string
+    required: true,
+  },
+  required_signatures: {
     type: Number,
+    default: 1,
+  },
+  signatures: [
+    {
+      id: {
+        type: String,
+        required: true,
+      },
+      username: String,
+      status: {
+        type: String,
+        enum: ["pending", "signed", "rejected"],
+        default: "pending",
+      },
+    }
+  ],
+  nonce: {
+    type: String,
     unique: true,
   },
   status: {
@@ -61,47 +73,11 @@ const TransactionSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "pending",
   },
-  created_at: {
-    type: Date,
-    default: Date.now,
-  },
-  expires_at: {
-    type: Date,
-  },
+  expires_at: Date,
+}, {
+  timestamps: true
 });
 
-const TransactionSignatureSchema = new mongoose.Schema({
-  signature_id: {
-    type: mongoose.Schema.Types.UUID,
-    default: () => crypto.randomUUID(),
-    unique: true,
-  },
-  tx_id: {
-    type: mongoose.Schema.Types.UUID,
-    ref: "Transaction",
-    required: true,
-  },
-  signer_id: {
-    type: mongoose.Schema.Types.UUID,
-    ref: "Signer",
-    required: true,
-  },
-  partial_signature: {
-    type: String,
-  },
-  signed_at: {
-    type: Date,
-    default: Date.now,
-  },
-  totp_used: {
-    type: String,
-    maxlength: 6,
-  },
-});
-
-const TransactionSignature = mongoose.model(
-  "TransactionSignature",
-  TransactionSignatureSchema
-);
-const Transaction = mongoose.model("Transaction", TransactionSchema);
-const Signer = mongoose.model("Signer", SignerSchema);
+// Models
+export const User = mongoose.model("User", UserSchema);
+export const Transaction = mongoose.model("Transaction", TransactionSchema);
