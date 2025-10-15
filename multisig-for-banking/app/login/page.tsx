@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,8 +11,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
+
   return (
     <div className="flex justify-center items-center mt-10">
       <Card className="w-full max-w-sm">
@@ -21,7 +25,14 @@ export default function Login() {
             Enter your email below to login to your account
           </CardDescription>
           <CardAction>
-            <Button variant="link">Sign Up</Button>
+            <Button
+              onClick={() => {
+                router.replace("/register");
+              }}
+              variant="link"
+            >
+              Sign Up
+            </Button>
           </CardAction>
         </CardHeader>
         <CardContent>
@@ -46,7 +57,13 @@ export default function Login() {
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
+          <Button
+            onClick={() => {
+              router.push("/validate-code");
+            }}
+            type="submit"
+            className="w-full"
+          >
             Login
           </Button>
         </CardFooter>

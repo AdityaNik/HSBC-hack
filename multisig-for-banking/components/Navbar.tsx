@@ -8,7 +8,12 @@ export const Navbar = () => {
 
   return (
     <div className="flex flex-row justify-between p-4">
-      <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+      <h1
+        onClick={() => {
+          router.replace("/");
+        }}
+        className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance cursor-pointer"
+      >
         MultiSig
       </h1>
       <div className="flex gap-4">
